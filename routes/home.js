@@ -1,10 +1,11 @@
-// Importações
 const express = require('express');
+const PageModel = require('../models/PageModel');
 const router = express.Router();
 
-// Rota GET para a página inicial '/', que renderiza a página 'home'
+// Rota para a página inicial
 router.get('/', (req, res) => {
-    res.render('home')
+    const pages = PageModel.getAllPages();
+    res.render('home', { pages });
 })
 
-module.exports = router
+module.exports = router;

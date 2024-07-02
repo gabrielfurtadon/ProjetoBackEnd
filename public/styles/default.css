@@ -29,5 +29,13 @@ Se for definir cores que serão utilizadas em outras telas, recomendo colocar aq
 }
 
 .bg-white {
+    background-color: white !important;
+}
+
+.color-white {
+    color: white !important;
+}
+
+.bg-pastel {
     background-color: #fdf9eb !important;
 }

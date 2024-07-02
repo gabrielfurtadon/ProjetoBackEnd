@@ -1,14 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<!-- 
-Aqui precisa mudar bastante coisa, fiz apenas um modelo para facilidar
-TO-DO
-- Melhorar aparência da página
-- Pensar em uma forma de renderizar os sites
-- escolher estilo dos sites renderizados (Fiz utilizando os cards do Bootstrap, mas é apenas uma ideia)
--->
-
 <head>
     <!-- Metadados -->
     <meta charset="utf-8">
@@ -22,10 +14,10 @@ TO-DO
     <title>Home</title>
 </head>
 
-<body class="bg-white">
+<body class="bg-pastel">
     <!-- Cabeçalho com botão de login -->
     <header class="p-3 d-flex justify-content-end">
-        <a href="/login" class="btn login-button bg-orange">Login</a>
+        <a href="/login" class="btn bg-orange color-white">Login</a>
     </header>
     <!-- Texto de boas vindas -->
     <div class="text-center">
@@ -36,33 +28,16 @@ TO-DO
     </div>
     <!-- Seção de receitas -->
     <section class="mt-5 p-4 bg-orange d-flex justify-content-around">
-        <!-- Card de receita 1 -->
-        <div class="card bg-white" style="width: 18rem;">
+        <!-- Card de receitas -->
+        {{#pages}}
+        <div class="card bg-pastel" style="width: 18rem;">
             <div class="card-body">
-                <h5 class="card-title">Receita 1</h5>
-                <h6 class="card-subtitle mb-2 text-muted">Bolo de cenoura</h6>
-                <p class="card-text">3 copos de cenoura, ovo e leite.</p>
-                <a href="#" class="card-link">link da receita</a>
+                <h5 class="card-title">{{title}}</h5>
+                <p class="card-text">{{content}}</p>
+                <a href="pages/{{URL}}" class="card-link">link da receita</a>
             </div>
         </div>
-        <!-- Card de receita 2 -->
-        <div class="card bg-white" style="width: 18rem;">
-            <div class="card-body">
-                <h5 class="card-title">Receita 2</h5>
-                <h6 class="card-subtitle mb-2 text-muted">Bolo de chocolate</h6>
-                <p class="card-text">3 copos de chocolate, ovo e leite.</p>
-                <a href="#" class="card-link">link da receita</a>
-            </div>
-        </div>
-        <!-- Card de receita 3 -->
-        <div class="card bg-white" style="width: 18rem;">
-            <div class="card-body">
-                <h5 class="card-title">Receita 3</h5>
-                <h6 class="card-subtitle mb-2 text-muted">Bolo de morango</h6>
-                <p class="card-text">3 copos de morango, ovo e leite.</p>
-                <a href="#" class="card-link">link da receita</a>
-            </div>
-        </div>
+        {{/pages}}
     </section>
 </body>
 

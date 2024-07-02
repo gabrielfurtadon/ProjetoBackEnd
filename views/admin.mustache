@@ -5,65 +5,146 @@
     <!-- Metadados -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Estilos CSS -->
+    <meta name="csrf-token" content="{{csrfToken}}">
+    <!-- Estilos CSS e Bootstrap-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="styles/default.css"> <!-- Estilo padrão -->
     <link rel="stylesheet" href="styles/admin.css"> <!-- Estilo específico -->
+    <!-- Script /admin -->
+    <script defer src="scripts/admin.js"></script>
+    <!-- Script Bootstrap -->
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
     <!-- Título da página -->
     <title>Admin</title>
 </head>
 
-<body class="bg-white">
-    <!-- Cabeçalho da página -->
-    <h1>Tela do Admin</h1>
-    <!-- Botão para abrir modal de criar novo Admin -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newAdmin">
-        Criar novo Admin
-    </button>
-    <!-- Botão para logout -->
-    <a href="/logout"><button class="btn btn-danger">Sair</button></a>
-    <!-- Modal para criar novo Admin -->
+<body class="bg-pastel">
 
-    <!-- 
-    Verifico se tem erros, se tiver renderiza o modal sem o efeito fade
-    para parecer que ele não foi fechado e aberto novamente
-    -->
-    {{#error}} <!-- Verifica se há erros para exibir o modal -->
-    <div id="newAdmin" class="modal">
-    {{/error}}
-    {{^error}} <!-- Caso não haja erros, adiciona a classe 'fade' para o modal -->
-    <div id="newAdmin" class="modal fade">
-    {{/error}}
-        <!-- Conteúdo do modal -->
-        <div class="modal-dialog">
+    <!-- Cabeçalho da página -->
+    <header class="d-flex align-items-center justify-content-between mb-5 shadow bg-white">
+        <h1 class="fw-bold color-orange m-0">Bem vindo {{user}}</h1>
+        <div>
+            <!-- Botão home e logout -->
+            <a href="/"><button class="btn bg-orange color-white">Home</button></a>
+            <a href="/logout"><button class="btn btn-danger">Sair</button></a>
+        </div>
+    </header>
+
+    <main class="m-auto col-12 col-md-8">
+        <!-- Abas -->
+        <ul class="nav nav-tabs" role="tablist">
+            <!-- Botão aba de páginas -->
+            <li class="nav-item custom-nav-item" role="presentation">
+                <button class="nav-link active w-100 fw-bold fs-4" id="pages-tab" data-bs-toggle="tab"
+                    data-bs-target="#pages" type="button" role="tab" aria-controls="pages"
+                    aria-selected="true">Páginas</button>
+            </li>
+            <!-- Botão aba de administradores -->
+            <li class="nav-item custom-nav-item" role="presentation">
+                <button class="nav-link w-100 fw-bold fs-4" id="admins-tab" data-bs-toggle="tab"
+                    data-bs-target="#admins" type="button" role="tab" aria-controls="admins"
+                    aria-selected="false">Administradores</button>
+            </li>
+        </ul>
+
+        <div class="tab-content bg-white">
+            <!-- Aba de páginas -->
+            <div class="tab-pane fade show active" id="pages" role="tabpanel" aria-labelledby="pages-tab">
+                <div class="d-flex flex-column align-items-center">
+                    <!-- Botão para abrir modal de criar nova página -->
+                    <button type="button" class="btn btn-lg bg-orange color-white mt-5" id="newPageButton"
+                        data-bs-toggle="modal" data-bs-target="#pageModal">
+                        Criar uma nova página
+                    </button>
+                    <!-- Lista de páginas criadas pelo administrador -->
+                    <ul class="flex-row w-100 list-unstyled p-5">
+                        {{#pages}}
+                        <li class="d-flex justify-content-between align-items-center p-3 border-top">
+                            <div class="row">
+                                <span class="fs-5">{{title}}</span>
+                                <span class="fs-6">localhost:3000/pages/{{URL}}</span>
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-success" id="editPageButton" data-url="{{URL}}"
+                                    data-title="{{title}}" data-content="{{content}}" data-bs-toggle="modal"
+                                    data-bs-target="#pageModal">Editar</button>
+                                <button type="button" class="btn btn-danger" id="deletePageButton"
+                                    data-url="{{URL}}">Deletar</button>
+                            </div>
+                        </li>
+                        {{/pages}}
+                        {{^pages}}
+                        <p class="fs-5 text-center">Você ainda não tem nenhuma página.</p>
+                        {{/pages}}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Aba de administradores -->
+            <div class="tab-pane fade" id="admins" role="tabpanel" aria-labelledby="admins-tab">
+                <div class="d-flex flex-column align-items-center">
+                    <!-- Botão para abrir modal de criar novo administrador -->
+                    <button type="button" class="btn btn-lg bg-orange color-white mt-5" id="newAdminButton"
+                        data-bs-toggle="modal" data-bs-target="#adminModal">
+                        Criar um novo administrador
+                    </button>
+                    <!-- Lista de usuários -->
+                    <ul class="flex-row w-100 list-unstyled p-5">
+                        {{#administrators}}
+                        <li class="d-flex justify-content-between align-items-center p-3 border-top">
+                            <span class="fs-5">{{user}}</span>
+                            <div>
+                                <button type="button" class="btn btn-success" id="editAdminButton" data-id="{{id}}"
+                                    data-user="{{user}}" data-bs-toggle="modal"
+                                    data-bs-target="#adminModal">Editar</button>
+                                <button type="button" class="btn btn-danger" id="deleteAdminButton"
+                                    data-id="{{id}}">Deletar</button>
+                            </div>
+                        </li>
+                        {{/administrators}}
+                    </ul>
+                </div>
+            </div>
+    </main>
+
+    <!-- Modal página -->
+    <div id="pageModal" class="modal fade">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <!-- Cabeçalho do modal -->
                 <div class="modal-header">
-                    <h3 class="modal-title">Criar novo Admin</h3>
-                    <!-- Botão para fechar o modal -->
-                    <button type="button" class="btn btn-close" data-bs-dismiss="modal"></button>
+                    <h3 class="modal-title" id="pageModalTitle"></h3>
+                    <button type="button" class="btn btn-close" id="btnClose" data-bs-dismiss="modal"></button>
                 </div>
                 <!-- Corpo do modal -->
                 <div class="modal-body">
-                    <!-- Formulário para criar novo Admin -->
-                    <form action="/admin" method="post">
-                        <!-- Campo de usuário -->
-                        <div class="form-group mb-3">
-                            <label for="user">Usuário</label>
-                            <input id="user" name="user" type="text" class="form-control" />
+                    <!-- Formulário para criar nova página -->
+                    <form action="" id="modalForm" method="post">
+                        <!-- Campo URL -->
+                        <div class="input-group mb-3">
+                            <label for="url" class="input-group-text">https://localhost:3000/pages/</label>
+                            <input id="url" name="url" class="form-control" type="text">
                         </div>
-                        <!-- Campo de senha -->
-                        <div class="form-group mb-3">
-                            <label for="password">Senha</label>
-                            <input id="password" name="password" type="password" class="form-control" />
+                        <!-- Campo título -->
+                        <div class="input-group mb-3">
+                            <label for="title" class="input-group-text">Título: </label>
+                            <input name="title" id="title" class="form-control" type="text">
                         </div>
-                        <!-- Exibe mensagem de erro, se houver -->
-                        {{#error}}<div class="alert alert-danger" role="alert">{{.}}</div>{{/error}}
+                        <!-- Campo conteúdo -->
+                        <div class="input-group mb-3">
+                            <label for="content" class="input-group-text">Digite o conteúdo</label>
+                            <textarea name="content" id="content" class="form-control" rows="10"></textarea>
+                        </div>
+                        <!-- Mensagens de erro -->
+                        <div class="alert alert-danger hide" id="errorPage" role="alert"></div>
                         <!-- Botões de criar e fechar -->
                         <div class="mt-3 d-flex justify-content-between">
-                            <button type="submit" class="btn btn-success flex-grow-1 me-2">Criar</button>
-                            <button type="button" class="btn btn-danger flex-grow-1"
+                            <button type="submit" class="btn btn-success flex-grow-1 me-2"
+                                id="pageModalButton"></button>
+                            <button type="button" class="btn btn-danger flex-grow-1" id="btnClose"
                                 data-bs-dismiss="modal">Fechar</button>
                         </div>
                     </form>
@@ -71,22 +152,55 @@
             </div>
         </div>
     </div>
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
-    <!-- 
-        Script para mostrar o modal automaticamente se houver erro, 
-        assim quando a pagina recarregar o modal já vai estar aberto 
-    -->
-    {{#error}}
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const adminModal = new bootstrap.Modal(document.getElementById('newAdmin'));
-            adminModal.show();
-        });
-    </script>
-    {{/error}}
+
+    <!-- Modal administrador -->
+    <div id="adminModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Cabeçalho do modal -->
+                <div class="modal-header">
+                    <h3 class="modal-title" id="adminModalTitle"></h3>
+                    <button type="button" class="btn btn-close" id="btnClose" data-bs-dismiss="modal"></button>
+                </div>
+                <!-- Corpo do modal -->
+                <div class="modal-body">
+                    <!-- Formulário para criar novo administrador -->
+                    <form action="" id="modalForm" method="post">
+                        <!-- Campo ID -->
+                        <input type="hidden" id="adminId" name="id">
+                        <!-- Campo usuário -->
+                        <div class="mb-3">
+                            <label for="user">Usuário</label>
+                            <input id="user" name="user" type="text" class="form-control" />
+                        </div>
+                        <!-- Campo senha -->
+                        <div class="mb-3">
+                            <label for="password">Senha</label>
+                            <input id="password" name="password" type="password" class="form-control" />
+                        </div>
+                        <!-- Mensagens de erro -->
+                        <div class="alert alert-danger hide" id="errorAdmin" role="alert"></div>
+                        <!-- Botões de criar e fechar -->
+                        <div class="mt-3 d-flex justify-content-between">
+                            <button type="submit" class="btn btn-success flex-grow-1 me-2"
+                                id="adminModalButton"></button>
+                            <button type="button" class="btn btn-danger flex-grow-1" id="btnClose"
+                                data-bs-dismiss="modal">Fechar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toasts -->
+    <div class="toast position-absolute top-0 mt-3 start-50 translate-middle-x align-items-center" role="alert"
+        aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body" id="toastMessage"></div>
+            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
 </body>
 
 </html>

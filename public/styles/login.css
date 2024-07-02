@@ -1,16 +1,9 @@
-/* Css para a tela de login */
+/* Css para a tela login */
+
+h1 {
+    font-size: 42px;
+}
 
 form {
-    min-width: 400px;
-    background-color: white;
-}
-
-button {
-    color: white !important;
-}
-
-a {
-    display: block;
-    text-align: center;
-    margin-top: 30px;
+    width: 420px;
 }
