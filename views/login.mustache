@@ -14,31 +14,35 @@
     <title>Login</title>
 </head>
 
-<body class="bg-white">
+<body class="bg-pastel">
     <!-- Logo -->
-    <img class="img-fluid mx-auto d-block" src="images/logo.png" alt="Logo" width="400px">
+    <img class="m-auto mb-5 d-block" src="images/logo.png" alt="Logo" width="400px">
     <!-- Formulário de login -->
-    <div class="d-flex align-items-center justify-content-center flex-column">
-        <form class="col-xl-3 shadow rounded p-5" action="/login" method="post">
-            <!-- Título do formulário -->
-            <h1 class="text-center fw-bold display-5 mb-4 color-orange">Login</h1>
-            <!-- Campo de usuário -->
-            <div class="form-group mb-3">
-                <label for="user">Usuário</label>
-                <input id="user" name="user" type="text" class="form-control" />
-            </div>
-            <!-- Campo de senha -->
-            <div class="form-group mb-3">
-                <label for="password">Senha</label>
-                <input id="password" name="password" type="password" class="form-control" />
-            </div>
-            <!-- Exibe mensagem de erro, se houver -->
-            {{#error}}<div class="alert alert-danger" role="alert">{{.}}</div>{{/error}}
-            <!-- Botão de login -->
-            <button type="submit" class="btn btn-lg col-12 bg-orange">Entrar</button>
-            <!-- Link para voltar para a tela inicial -->
-            <a href="/" class="text-decoration-none color-orange">Voltar para a tela inicial</a>
-    </div>
+    <form class="m-auto shadow rounded p-5 bg-white" action="/login" method="post">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        <!-- Título do formulário -->
+        <h1 class="text-center fw-bold mb-4 color-orange">Login</h1>
+        <!-- Campo usuário -->
+        <div class="mb-3">
+            <label for="user">Usuário</label>
+            <input id="user" name="user" type="text" class="form-control" />
+        </div>
+        <!-- Campo senha -->
+        <div class="mb-3">
+            <label for="password">Senha</label>
+            <input id="password" name="password" type="password" class="form-control" />
+        </div>
+        <!-- Exibe mensagem de erro, se houver -->
+        {{#hasError}}
+        <div class="alert alert-danger" role="alert">
+            {{#error}}
+            <div>{{.}}</div>
+            {{/error}}
+        </div>
+        {{/hasError}}
+        <!-- Botão de login e home -->
+        <button type="submit" class="btn btn-lg w-100 bg-orange color-white">Entrar</button>
+        <a href="/" class="d-block text-center mt-4 text-decoration-none color-orange">Voltar para a tela inicial</a>
     </form>
 </body>
 
