@@ -44,12 +44,11 @@ router.post('/newPage', isLogged, pageValidationRules(), validateData, (req, res
     }
     // Registra a nova rota dinâmica
     registerPageRoute(url, title, content);
-    // Redireciona para a página admin após adição bem-sucedida
-    return res.redirect('/admin');
+    return res.status(200).json({ message: ['Página criada com sucesso!'] });
 });
 
 // Rota para edtar uma página
-router.post('/editPage', isLogged, pageValidationRules(), validateData, (req, res) => {
+router.put('/editPage', isLogged, pageValidationRules(), validateData, (req, res) => {
     // Verifica e manipula erros de validação
     if (handleValidationErrors(req, res)) return;
     // Obtém dados de edição da página
@@ -61,12 +60,11 @@ router.post('/editPage', isLogged, pageValidationRules(), validateData, (req, re
     }
     // Atualiza a rota dinâmica existente
     registerPageRoute(url, title, content);
-    // Redireciona para a página admin após edição bem-sucedida
-    res.redirect('/admin');
+    return res.status(201).json({ message: ['Página editada com sucesso!'] });
 });
 
 // Rota para excluir uma página
-router.post('/deletePage', isLogged, (req, res) => {
+router.delete('/deletePage', isLogged, (req, res) => {
     // Obtém a url da página a ser excluída
     const { url } = req.body;
     const userId = req.session.admin.id;
@@ -76,8 +74,7 @@ router.post('/deletePage', isLogged, (req, res) => {
     }
     // Remove a rota dinâmica existente
     removeExistingRoute(url);
-    // Redireciona para a página admin após exclusão bem-sucedida
-    res.redirect('/admin');
+    return res.status(204).json({});
 });
 
 // Inicializa as rotas ao iniciar o servidor

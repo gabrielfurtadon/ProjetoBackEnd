@@ -29,12 +29,11 @@ router.post('/newAdmin', isLogged, userValidationRules(), validateData, (req, re
     if (!adminModel.addAdministrator(user, password)) {
         return res.status(400).json({ errors: ['Já existe um usuário com esse nome.'] });
     }
-    // Redireciona para a página admin após adição bem-sucedida
-    res.redirect('/admin');
+    return res.status(200).json({ message: ['Administrador criado com sucesso!'] });
 });
 
 // Rota para editar um administrador existente
-router.post('/editAdmin', isLogged, userValidationRules(), validateData, (req, res) => {
+router.put('/editAdmin', isLogged, userValidationRules(), validateData, (req, res) => {
     // Verifica e manipula erros de validação
     if (handleValidationErrors(req, res)) return;
     // Obtém dados de edição do administrador
@@ -43,12 +42,11 @@ router.post('/editAdmin', isLogged, userValidationRules(), validateData, (req, r
     if (!adminModel.editAdministrator(id, user, password)) {
         return res.status(400).json({ errors: ['Já existe um usuário com esse nome.'] });
     }
-    // Redireciona para a página admin após edição bem-sucedida
-    res.redirect('/admin');
+    return res.status(201).json({ message: ['Administrador editado com sucesso'] });
 });
 
 // Rota para excluir um administrador
-router.post('/deleteAdmin', isLogged, (req, res) => {
+router.delete('/deleteAdmin', isLogged, (req, res) => {
     // Obtém o ID do administrador a ser excluído
     const { id } = req.body;
     // Tenta excluir o administrador
@@ -59,7 +57,7 @@ router.post('/deleteAdmin', isLogged, (req, res) => {
             return res.redirect('/logout');
         }
         // Redireciona para a página admin após exclusão bem-sucedida
-        return res.redirect('/admin');
+        return res.status(204).json({});
     }
     return res.status(400).json({ errors: ['Erro ao excluir administrador.'] });
 });

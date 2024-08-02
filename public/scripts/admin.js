@@ -31,6 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
         elements.forms.forEach(form => form.setAttribute('action', link));
     }
 
+    // Função para definir o atributo 'method' do formulário
+    const setFormMethod = method => {
+        elements.forms.forEach(form => form.setAttribute('method', method));
+    }
+
     // Função para limpar todos os formulários e mensagens de erro
     const clearForms = () => {
         elements.pageModalTitle.textContent = '';
@@ -52,31 +57,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Função para lidar com requisições AJAX
-    const handleRequest = (url, jsonData, errorElement) => {
+    const handleRequest = (url, jsonData, errorElement, method) => {
         fetch(url, {
             credentials: 'same-origin',
             headers: { 'CSRF-Token': elements.token, 'Content-Type': 'application/json' },
-            method: 'POST',
+            method: method,
             body: JSON.stringify(jsonData),
         })
-            .then(response => {
-                if (response.ok) {
-                    // Redireciona para a página admin se o envio for bem-sucedido
-                    window.location.href = '/admin';
-                } else {
-                    // Exibe mensagem de erro retornada pelo servidor
-                    response.json().then(data => {
-                        errorElement.innerHTML = '';
-                        data.errors.forEach(error => {
-                            const errorItem = document.createElement('div');
-                            errorItem.textContent = error;
-                            errorElement.appendChild(errorItem);
-                        })
-                        errorElement.classList.remove('hide');
-                    }).catch(err => console.error('Erro ao parsear JSON:', err));
-                }
-            })
+            .then(response => hadleResponse(response, errorElement))
             .catch(error => console.error('Erro ao enviar a requisição:', error));
+    }
+
+    // Função para lidar com resposta da requisição
+    const hadleResponse = (response, errorElement) => {
+        if (response.ok) {
+            // Redireciona para a página admin se o envio for bem-sucedido
+            window.location.href = '/admin';
+        } else {
+            response.json().then(data => displayErrors(data, errorElement))
+                .catch(err => console.error('Erro ao parsear JSON:', err));
+        }
+    }
+
+    // Função para exibir erros
+    const displayErrors = (data, errorElement) => {
+        errorElement.innerHTML = '';
+        data.errors.forEach(error => {
+            const errorItem = document.createElement('div');
+            errorItem.textContent = error;
+            errorElement.appendChild(errorItem);
+        })
+        errorElement.classList.remove('hide');
     }
 
     // Função para lidar com o evento de envio de formulário
@@ -84,10 +95,11 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault();
         const form = event.target;
         const url = form.getAttribute('action');
+        const method = form.getAttribute('method');
         const data = new FormData(form);
         const jsonData = Object.fromEntries(data.entries());
         const errorElement = url.includes('Admin') ? elements.errorAdmin : elements.errorPage;
-        handleRequest(url, jsonData, errorElement);
+        handleRequest(url, jsonData, errorElement, method);
     }
 
     // Evento de clique para os botões de exclusão
@@ -95,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const button = event.target;
         const dataValue = button.getAttribute(`data-${dataKey}`);
         const jsonData = { [dataKey]: dataValue };
-        handleRequest(url, jsonData, elements.toastMessage);
+        handleRequest(url, jsonData, elements.toastMessage, 'delete');
         elements.toast.show();
     }
 
@@ -104,6 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
         elements.pageModalTitle.textContent = 'Criar nova Página';
         elements.pageModalButton.textContent = 'Criar';
         setFormLink('/newPage');
+        setFormMethod('post');
     })
 
     // Evento de clique para o botão de editar página
@@ -116,6 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
         elements.pageUrl.setAttribute('readonly', true);
         elements.pageUrl.style.backgroundColor = '#f8f9fa';
         setFormLink('/editPage');
+        setFormMethod('put');
     }))
 
     // Adiciona eventos aos botões de exclusão de página
@@ -128,6 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
         elements.adminModalTitle.textContent = 'Criar novo Administrador';
         elements.adminModalButton.textContent = 'Criar';
         setFormLink('/newAdmin');
+        setFormMethod('post');
     });
 
     // Evento de clique para o botao de editar administradores
@@ -137,6 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
         elements.user.value = button.getAttribute('data-user');
         elements.adminId.value = button.getAttribute('data-id');
         setFormLink('/editAdmin');
+        setFormMethod('put');
     }));
 
     // Adiciona eventos aos botões de exclusão de administrador
